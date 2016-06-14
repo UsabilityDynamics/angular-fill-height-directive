@@ -1,6 +1,7 @@
-﻿(function (fillHeightModule) {
+(function (fillHeightModule) {
 
     fillHeightModule.directive('fillHeight', ['$window', '$document', '$timeout', function ($window, $document, $timeout) {
+      console.debug( 'fillHeight' );
         return {
             restrict: 'A',
             scope: {
@@ -9,6 +10,8 @@
                 debounceWait: '@'
             },
             link: function (scope, element, attrs) {
+                console.debug( 'fillHeight.link', element, attrs );
+              
                 if (scope.debounceWait === 0) {
                     angular.element($window).on('resize', windowResize);
                 } else {
@@ -37,6 +40,7 @@
                 }
                 
                 function onWindowResize() {
+                  console.debug( 'fillHeight.link.onWindowResize' );
                     var footerElement = angular.element($document[0].getElementById(scope.footerElementId));
                     var footerElementHeight;
 
@@ -48,17 +52,27 @@
                         footerElementHeight = 0;
                     }
 
-                    var elementOffsetTop = element[0].offsetTop;
+                  console.debug( 'fillHeight.link.onWindowResize. footerElement:', footerElement );
+                  console.debug( 'fillHeight.link.onWindowResize. footerElementHeight:', footerElementHeight );
+
+                  var elementOffsetTop = element[0].offsetTop;
                     var elementBottomMarginAndBorderHeight = getBottomMarginAndBorderHeight(element);
 
-                    var additionalPadding = scope.additionalPadding || 0;
+                  console.debug( 'fillHeight.link.onWindowResize. elementOffsetTop:', elementOffsetTop );
+
+                  var additionalPadding = scope.additionalPadding || 0;
 
                     var elementHeight = $window.innerHeight
                                         - elementOffsetTop
                                         - elementBottomMarginAndBorderHeight
                                         - footerElementHeight
                                         - additionalPadding;
+
+                  console.debug( 'fillHeight.link.onWindowResize. elementHeight:[%s]', elementHeight );
                     element.css('height', elementHeight + 'px');
+
+                  // use to trigger CSS
+                  element.addClass('fill-height-applied');
                 }
 
                 function getTopMarginAndBorderHeight(element) {
@@ -80,4 +94,4 @@
         };
     }]);
 
-})(angular.module("fillHeight", []))
+})(angular.module("fillHeight", []));
